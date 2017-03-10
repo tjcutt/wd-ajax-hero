@@ -1,7 +1,7 @@
 (function() {
   'use strict';
 
-  const movies = [];
+  let movies = [];
 
   const renderMovies = function() {
     $('#listings').empty();
@@ -57,4 +57,39 @@
   };
 
   // ADD YOUR CODE HERE
+
+
+
+  $('button').click(function(e) {
+    e.preventDefault();
+
+    let searchVal = $('#search').val()
+
+    if (searchVal.length === 0) {
+      Materialize.toast('Please enter a keyword into the search', 3000)
+    }
+
+    $.ajax({
+      method: 'GET',
+      url: `http://omdbapi.com/?s=${searchVal}`,
+      dataType: 'json',
+      success: (movieObj) => {
+        movies = []
+        let movieArr = movieObj['Search']
+
+        for (let movie of movieArr) {
+          let movieInfo = {
+            poster: movie['Poster'],
+            title: movie['Title'],
+            year: movie['Year'],
+            id: movie['imdbID']
+          }
+          movies.push(movieInfo)
+        }
+        renderMovies()
+      },
+      error:
+      console.log('OMDB API call error')
+    })
+  })
 })();
